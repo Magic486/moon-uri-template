@@ -32,6 +32,10 @@ jobs:
           git diff --exit-code -- \
             conformance_generated_wbtest.mbt conformance-summary.json
 
+      - name: Verify mooncakes archive contents
+        shell: pwsh
+        run: ./tools/check_package_contents.ps1
+
       - name: Check formatting and public API
         run: |
           moon fmt --check

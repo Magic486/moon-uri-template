@@ -58,6 +58,8 @@ plus 2 defensive aborts that guard impossible internal states.
 - [x] Upstream Apache-2.0 license retained
 - [x] Changelog
 - [x] GitHub Actions workflow
+- [x] Reproducible release preflight and publish-archive validation
+- [x] GitHub/Gitlink/mooncakes.io release checklist
 
 ## Remaining external or release work
 
