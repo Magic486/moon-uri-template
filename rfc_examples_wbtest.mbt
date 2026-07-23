@@ -106,7 +106,7 @@ test "undefined and empty values have distinct behavior" {
   let parsed = try! UriTemplate::parse("/issues{?missing,empty}")
   let variables : Map[String, UriValue] = { "empty": Scalar("") }
   assert_eq(try! parsed.expand(variables), "/issues?empty=")
-  let no_variables : Map[String, UriValue] = {}
+  let no_variables : Map[String, UriValue] = Map([])
   assert_eq(try! parsed.expand(no_variables), "/issues")
 }
 

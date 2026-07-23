@@ -55,7 +55,7 @@ pub fn variables_from_json(
       message="variables JSON must be an object",
     )
   }
-  let result : Map[String, UriValue] = {}
+  let result : Map[String, UriValue] = Map([])
   for name, value in values {
     result[name] = json_value_to_uri_value(name, value)
   }
