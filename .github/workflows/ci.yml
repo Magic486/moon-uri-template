@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve dependencies
+        run: |
+          moon version --all
+          moon update
+
+      - name: Regenerate conformance tests
+        shell: pwsh
+        run: |
+          ./tools/generate_conformance_tests.ps1
+          moon fmt conformance_generated_wbtest.mbt
+          git diff --exit-code -- conformance_generated_wbtest.mbt
+
+      - name: Check formatting and public API
+        run: |
+          moon fmt --check
+          moon check --warn-list +73
+          moon info
+
+      - name: Test every supported backend
+        run: moon test --target all

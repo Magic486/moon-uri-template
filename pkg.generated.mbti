@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "yelfs/moon-uri-template"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const DEFAULT_MAX_OUTPUT_LENGTH : Int = 1048576
+
+pub fn is_valid(StringView) -> Bool
+
+pub fn variables_from_json(Json) -> Map[String, UriValue] raise UriTemplateError
+
+// Errors
+pub(all) suberror UriTemplateError {
+  SyntaxError(offset~ : Int, message~ : String)
+  InvalidValue(variable~ : String, message~ : String)
+  OutputLimitExceeded(limit~ : Int)
+} derive(@debug.Debug)
+pub impl Show for UriTemplateError
+
+// Types and methods
+type Modifier derive(Eq, @debug.Debug)
+
+type Operator derive(Eq, @debug.Debug)
+
+type TemplatePart derive(Eq, @debug.Debug)
+
+pub struct UriTemplate {
+  source : String
+  parts : Array[TemplatePart]
+  variables : Array[String]
+  level : Int
+}
+pub fn UriTemplate::expand(Self, Map[String, UriValue]) -> String raise UriTemplateError
+pub fn UriTemplate::expand_with_limit(Self, Map[String, UriValue], max_output_length~ : Int) -> String raise UriTemplateError
+pub fn UriTemplate::level(Self) -> Int
+pub fn UriTemplate::parse(StringView) -> Self raise UriTemplateError
+pub fn UriTemplate::source(Self) -> String
+pub fn UriTemplate::variables(Self) -> Array[String]
+
+pub(all) enum UriValue {
+  Scalar(String)
+  List(Array[String])
+  Assoc(Array[(String, String)])
+} derive(Eq, @debug.Debug)
+
+type VariableSpec derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
