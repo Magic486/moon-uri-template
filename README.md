@@ -71,6 +71,8 @@ attribution. Reproducible performance cases and the first local baseline are
 documented in [BENCHMARKS.md](BENCHMARKS.md).
 The [differential suite](DIFFERENTIAL_TESTING.md) compares representative
 expansions byte-for-byte with two independently maintained implementations.
+The current one-page contest application is available at
+[output/pdf/moon-uri-template-project-proposal.pdf](output/pdf/moon-uri-template-project-proposal.pdf).
 
 ## Resource limits
 

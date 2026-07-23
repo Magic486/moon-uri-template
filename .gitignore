@@ -1,6 +1,7 @@
 _build/
 .venv/
 __pycache__/
+tmp/
 target/
 .mooncakes/
 .DS_Store

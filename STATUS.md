@@ -69,7 +69,7 @@ plus 2 defensive aborts that guard impossible internal states.
 - [ ] Observe the GitHub Actions workflow succeeding remotely
 - [ ] Publish the package and CLI to mooncakes.io
 - [ ] Add final release notes and tag
-- [ ] Prepare the one-page project proposal PDF
+- [x] Prepare and visually verify the one-page project proposal PDF
 
 ## P1 engineering work
 
