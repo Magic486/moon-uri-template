@@ -130,6 +130,7 @@ fn parse_expression(
   source : String,
   start : Int,
   end : Int,
+  max_variables~ : Int,
 ) -> (Operator, Array[VariableSpec], Int) raise UriTemplateError {
   if start >= end {
     raise syntax_error(start, "empty expression")
@@ -158,6 +159,12 @@ fn parse_expression(
   let mut item_start = i
   for ; i <= end; {
     if i == end || source[i] == ',' {
+      if variables.length() >= max_variables {
+        raise ParseLimitExceeded(
+          kind="variables per expression",
+          limit=max_variables,
+        )
+      }
       variables.push(parse_variable_spec(source, item_start, i))
       item_start = i + 1
     }
@@ -174,15 +181,34 @@ fn parse_expression(
 }
 
 ///|
-/// Parse and validate an RFC 6570 URI Template.
-pub fn UriTemplate::parse(
+/// Default maximum accepted template length, measured in UTF-16 code units.
+pub const DEFAULT_MAX_TEMPLATE_LENGTH : Int = 1048576
+
+///|
+/// Default maximum number of expressions in one template.
+pub const DEFAULT_MAX_EXPRESSIONS : Int = 4096
+
+///|
+/// Default maximum number of variables in one expression.
+pub const DEFAULT_MAX_VARIABLES_PER_EXPRESSION : Int = 256
+
+///|
+/// Parse and validate an RFC 6570 URI Template with explicit resource limits.
+pub fn UriTemplate::parse_with_limits(
   source : StringView,
+  max_template_length~ : Int,
+  max_expressions~ : Int,
+  max_variables_per_expression~ : Int,
 ) -> UriTemplate raise UriTemplateError {
   let source = source.to_owned()
+  if source.length() > max_template_length {
+    raise ParseLimitExceeded(kind="template length", limit=max_template_length)
+  }
   let parts : Array[TemplatePart] = []
   let variable_names : Array[String] = []
   let mut level = 1
   let mut literal_start = 0
+  let mut expression_count = 0
   let mut i = 0
   for ; i < source.length(); {
     let ch = source[i]
@@ -197,6 +223,10 @@ pub fn UriTemplate::parse(
     if literal_start < i {
       parts.push(Literal(owned_slice(source, literal_start, i)))
     }
+    expression_count += 1
+    if expression_count > max_expressions {
+      raise ParseLimitExceeded(kind="expression count", limit=max_expressions)
+    }
     let expression_start = i + 1
     let mut close = expression_start
     for ; close < source.length() && source[close] != '}'; {
@@ -209,7 +239,10 @@ pub fn UriTemplate::parse(
       raise syntax_error(i, "unclosed expression")
     }
     let (operator, variables, expression_level) = parse_expression(
-      source, expression_start, close,
+      source,
+      expression_start,
+      close,
+      max_variables=max_variables_per_expression,
     )
     if expression_level > level {
       level = expression_level
@@ -227,6 +260,19 @@ pub fn UriTemplate::parse(
     parts.push(Literal(owned_slice(source, literal_start, source.length())))
   }
   { source, parts, variables: variable_names, level }
+}
+
+///|
+/// Parse and validate an RFC 6570 URI Template using safe default limits.
+pub fn UriTemplate::parse(
+  source : StringView,
+) -> UriTemplate raise UriTemplateError {
+  UriTemplate::parse_with_limits(
+    source,
+    max_template_length=DEFAULT_MAX_TEMPLATE_LENGTH,
+    max_expressions=DEFAULT_MAX_EXPRESSIONS,
+    max_variables_per_expression=DEFAULT_MAX_VARIABLES_PER_EXPRESSION,
+  )
 }
 
 ///|

@@ -1,0 +1,87 @@
+[
+  {
+    "name": "simple",
+    "template": "{value}",
+    "variables": {"value": "Hello World!"}
+  },
+  {
+    "name": "reserved",
+    "template": "{+path}/here",
+    "variables": {"path": "/foo/bar"}
+  },
+  {
+    "name": "fragment",
+    "template": "X{#value}",
+    "variables": {"value": "Hello World!"}
+  },
+  {
+    "name": "label",
+    "template": "X{.x,y}",
+    "variables": {"x": "1024", "y": "768"}
+  },
+  {
+    "name": "path",
+    "template": "{/segments*}",
+    "variables": {"segments": ["one", "two words", "三"]}
+  },
+  {
+    "name": "path parameters",
+    "template": "{;x,y,empty}",
+    "variables": {"x": "1024", "y": "768", "empty": ""}
+  },
+  {
+    "name": "query",
+    "template": "{?q,lang}",
+    "variables": {"q": "moon bit", "lang": "中文"}
+  },
+  {
+    "name": "query continuation",
+    "template": "?fixed=yes{&x,y}",
+    "variables": {"x": "1024", "y": "768"}
+  },
+  {
+    "name": "list",
+    "template": "{colors}",
+    "variables": {"colors": ["red", "green", "blue"]}
+  },
+  {
+    "name": "exploded list",
+    "template": "{?colors*}",
+    "variables": {"colors": ["red", "green", "blue"]}
+  },
+  {
+    "name": "associative",
+    "template": "{keys}",
+    "variables": {"keys": {"semi": ";"}}
+  },
+  {
+    "name": "exploded associative",
+    "template": "{?keys*}",
+    "variables": {"keys": {"semi": ";"}}
+  },
+  {
+    "name": "unicode prefix",
+    "template": "{value:2}",
+    "variables": {"value": "月兔Moon"}
+  },
+  {
+    "name": "pct-encoded prefix boundary",
+    "template": "{+value:1}",
+    "variables": {"value": "%20tail"},
+    "expected_outputs": {
+      "moon-uri-template": "%20",
+      "uritemplate 4.2.0": "%25",
+      "std-uritemplate 2.0.11": "%25"
+    }
+  },
+  {
+    "name": "undefined variable",
+    "template": "/users/{missing}{?page}",
+    "variables": {"page": "2"}
+  },
+  {
+    "name": "empty scalar",
+    "template": "{?empty}",
+    "variables": {"empty": ""}
+  }
+]

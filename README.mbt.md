@@ -12,6 +12,19 @@ The module currently uses the provisional namespace
 `yelfs/moon-uri-template`. The namespace and repository URL will be confirmed
 before the first mooncakes.io release.
 
+## Installation
+
+Until the first mooncakes.io release, clone this repository and resolve its
+locked dependencies:
+
+```bash
+moon update
+```
+
+Applications in the same module can import the root package directly. After
+publication, the final `moon add` command will be added here together with the
+confirmed namespace and repository URL.
+
 ## Features
 
 - RFC 6570 Levels 1–4
@@ -21,12 +34,28 @@ before the first mooncakes.io release.
 - Unicode code-point-aware prefixes
 - UTF-8 percent encoding
 - Structured errors with source offsets
+- Explicit parser and expanded-output resource limits
 - Deterministic expansion on Wasm, Wasm-GC, JavaScript, and Native
 - JSON variable adapter
 - `validate`, `variables`, `inspect`, and `expand` CLI commands
 - 153 vendored interoperability cases plus project-specific tests
 
 ## Library example
+
+The smallest scalar expansion parses once and supplies a typed value:
+
+```mbt check
+///|
+test "expand one scalar" {
+  let template = @moon-uri-template.UriTemplate::parse("hello/{name}")
+  let variables : Map[String, @moon-uri-template.UriValue] = {
+    "name": Scalar("MoonBit"),
+  }
+  assert_eq(template.expand(variables), "hello/MoonBit")
+}
+```
+
+A realistic endpoint can combine path, query, and exploded list values:
 
 ```mbt check
 ///|
@@ -85,6 +114,61 @@ test "explode a list into repeated query parameters" {
     "labels": List(["bug", "help wanted"]),
   }
   assert_eq(template.expand(variables), "?labels=bug&labels=help%20wanted")
+}
+```
+
+Associative values preserve pair order and can be exploded into named query
+parameters:
+
+```mbt check
+///|
+test "expand an associative value" {
+  let template = @moon-uri-template.UriTemplate::parse("{?filters*}")
+  let variables : Map[String, @moon-uri-template.UriValue] = {
+    "filters": Assoc([("state", "open"), ("author", "月兔")]),
+  }
+  assert_eq(template.expand(variables), "?state=open&author=%E6%9C%88%E5%85%94")
+}
+```
+
+## Resource limits
+
+`UriTemplate::parse` accepts templates up to 1 MiB, with at most 4,096
+expressions and 256 variables in one expression. Servers and tools accepting
+untrusted templates can apply stricter per-request limits:
+
+```mbt check
+///|
+test "parse with application-specific limits" {
+  let template = @moon-uri-template.UriTemplate::parse_with_limits(
+    "/users/{name}{?page}",
+    max_template_length=128,
+    max_expressions=2,
+    max_variables_per_expression=4,
+  )
+  assert_true(template.variables() == ["name", "page"])
+}
+```
+
+Expansion is independently bounded to 1 MiB by default. Use
+`expand_with_limit` when an application requires a different explicit limit.
+
+## Error handling
+
+Parsing and expansion return structured `UriTemplateError` values. Syntax
+errors carry a UTF-16 source offset; value and limit errors identify their
+category without echoing the complete variable map.
+
+```mbt check
+///|
+test "handle a syntax error with its source offset" {
+  let rejected = try @moon-uri-template.UriTemplate::parse("{unclosed") catch {
+    SyntaxError(offset~, message=_) => offset == 0
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(rejected)
 }
 ```
 
@@ -163,6 +247,8 @@ URI Template expansion is not input validation or authorization.
 - Errors do not include the complete variable map.
 - `expand` enforces a default output limit of 1 MiB.
 - `expand_with_limit` allows applications to set a tighter limit.
+- `parse_with_limits` bounds template length, expression count, and variables
+  per expression when templates are untrusted.
 
 The library does not send HTTP requests, resolve relative references, check
 whether resources exist, or reverse-match a URI into variables.

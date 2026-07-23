@@ -15,11 +15,11 @@ remote GitHub, Gitlink, or mooncakes.io state has been completed.
 - [x] Undefined and empty-value semantics
 - [x] Unicode code-point prefixes
 - [x] UTF-8 percent encoding
-- [x] Structured syntax, value, and output-limit errors
+- [x] Structured syntax, value, parse-limit, and output-limit errors
 - [x] Deterministic parsed templates that can be expanded repeatedly
 - [x] JSON variable adapter
 - [x] `validate`, `variables`, `inspect`, and `expand` CLI
-- [x] Default 1 MiB expanded-output limit
+- [x] Default parsing limits and 1 MiB expanded-output limit
 
 ## Test and quality evidence
 
@@ -40,8 +40,10 @@ remote GitHub, Gitlink, or mooncakes.io state has been completed.
 Most recent local result:
 
 ```text
-178 tests passed on each of wasm, wasm-gc, js, and native.
-13 uncovered lines: 10 CLI process paths and 3 defensive/unreachable branches.
+187 tests passed on each of wasm, wasm-gc, JavaScript, and native.
+Core library coverage: 349/351 instrumented lines (99.43%).
+The remaining 42 uncovered lines are executable entry paths (39 CLI, 3 example)
+plus 2 defensive aborts that guard impossible internal states.
 ```
 
 ## Documentation and compliance
@@ -69,13 +71,14 @@ Most recent local result:
 - [ ] Add final release notes and tag
 - [ ] Prepare the one-page project proposal PDF
 
-## Remaining P1 engineering work
+## P1 engineering work
 
-- [ ] Configurable parser limits for template length and expression count
-- [ ] Property-based parser/expander invariants
-- [ ] Performance benchmark and published baseline
-- [ ] Real integration example with an HTTP/OpenAPI-style request builder
-- [ ] Machine-readable conformance summary
+- [x] Configurable parser limits for template length, expressions, and variables
+- [x] Deterministic generated parser/expander invariant tests
+- [x] Native release performance benchmark and local baseline
+- [x] Real integration example with an HTTP/SDK-style request builder
+- [x] Machine-readable conformance summary
+- [x] Differential suite against two mature RFC 6570 implementations
 
 These P1 items improve award competitiveness but do not change RFC 6570 core
 compatibility.

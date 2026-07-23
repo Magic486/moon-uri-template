@@ -240,7 +240,61 @@ test "error display is stable and does not expose variables" {
     "invalid value for 'name': bad",
   )
   assert_eq(
+    ParseLimitExceeded(kind="expression count", limit=2).to_string(),
+    "URI Template expression count exceeds limit 2",
+  )
+  assert_eq(
     OutputLimitExceeded(limit=5).to_string(),
     "URI Template output exceeds limit 5",
   )
+}
+
+///|
+test "parser resource limits are configurable" {
+  let length_limited = try
+    UriTemplate::parse_with_limits(
+      "abcd",
+      max_template_length=3,
+      max_expressions=1,
+      max_variables_per_expression=1,
+    )
+  catch {
+    ParseLimitExceeded(kind~, limit~) => kind == "template length" && limit == 3
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(length_limited)
+
+  let expression_limited = try
+    UriTemplate::parse_with_limits(
+      "{x}{y}",
+      max_template_length=100,
+      max_expressions=1,
+      max_variables_per_expression=1,
+    )
+  catch {
+    ParseLimitExceeded(kind~, limit~) =>
+      kind == "expression count" && limit == 1
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(expression_limited)
+
+  let variables_limited = try
+    UriTemplate::parse_with_limits(
+      "{x,y}",
+      max_template_length=100,
+      max_expressions=1,
+      max_variables_per_expression=1,
+    )
+  catch {
+    ParseLimitExceeded(kind~, limit~) =>
+      kind == "variables per expression" && limit == 1
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(variables_limited)
 }

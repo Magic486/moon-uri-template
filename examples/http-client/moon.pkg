@@ -1,0 +1,7 @@
+import {
+  "yelfs/moon-uri-template" @uri,
+}
+
+options(
+  "is-main": true,
+)

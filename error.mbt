@@ -3,6 +3,7 @@
 pub(all) suberror UriTemplateError {
   SyntaxError(offset~ : Int, message~ : String)
   InvalidValue(variable~ : String, message~ : String)
+  ParseLimitExceeded(kind~ : String, limit~ : Int)
   OutputLimitExceeded(limit~ : Int)
 } derive(Debug)
 
@@ -13,6 +14,8 @@ pub impl Show for UriTemplateError with fn output(self, logger) {
       logger.write_string("URI Template syntax error at \{offset}: \{message}")
     InvalidValue(variable~, message~) =>
       logger.write_string("invalid value for '\{variable}': \{message}")
+    ParseLimitExceeded(kind~, limit~) =>
+      logger.write_string("URI Template \{kind} exceeds limit \{limit}")
     OutputLimitExceeded(limit~) =>
       logger.write_string("URI Template output exceeds limit \{limit}")
   }

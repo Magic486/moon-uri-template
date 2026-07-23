@@ -1,6 +1,7 @@
 param(
   [string]$FixtureDirectory = "testdata/uritemplate-test",
-  [string]$OutputPath = "conformance_generated_wbtest.mbt"
+  [string]$OutputPath = "conformance_generated_wbtest.mbt",
+  [string]$SummaryPath = "conformance-summary.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -76,14 +77,19 @@ $fixtureNames = @(
   "negative-tests.json"
 )
 $testNumber = 0
+$rejectionCount = 0
+$fixtureSummary = [ordered]@{}
 
 foreach ($fixtureName in $fixtureNames) {
+  $fixtureTestCount = 0
+  $fixtureRejectionCount = 0
   $fixturePath = Join-Path $FixtureDirectory $fixtureName
   $document = Get-Content -Raw -LiteralPath $fixturePath | ConvertFrom-Json
   foreach ($groupProperty in $document.PSObject.Properties) {
     $group = $groupProperty.Value
     foreach ($case in $group.testcases) {
       $testNumber += 1
+      $fixtureTestCount += 1
       $template = [string]$case[0]
       $expected = $case[1]
       $testName = "conformance $fixtureName #$testNumber"
@@ -100,6 +106,8 @@ foreach ($fixtureName in $fixtureNames) {
       }
       $lines.Add("  }")
       if ($expected -is [bool] -and -not $expected) {
+        $rejectionCount += 1
+        $fixtureRejectionCount += 1
         $lines.Add(
           "  assert_true(conformance_rejects(" +
           (Quote-MoonString $template) + ", variables))"
@@ -131,6 +139,10 @@ foreach ($fixtureName in $fixtureNames) {
       $lines.Add("")
     }
   }
+  $fixtureSummary[$fixtureName] = [ordered]@{
+    tests = $fixtureTestCount
+    expected_rejections = $fixtureRejectionCount
+  }
 }
 
 $absoluteOutput = [IO.Path]::GetFullPath((Join-Path (Get-Location) $OutputPath))
@@ -141,4 +153,32 @@ if (-not $absoluteOutput.StartsWith($workspace + [IO.Path]::DirectorySeparatorCh
 
 $encoding = [Text.UTF8Encoding]::new($false)
 [IO.File]::WriteAllLines($absoluteOutput, $lines, $encoding)
-Write-Output "Generated $testNumber conformance tests at $absoluteOutput"
+
+$absoluteSummary = [IO.Path]::GetFullPath(
+  (Join-Path (Get-Location) $SummaryPath)
+)
+if (-not $absoluteSummary.StartsWith(
+    $workspace + [IO.Path]::DirectorySeparatorChar
+  )) {
+  throw "Refusing to write summary outside the workspace: $absoluteSummary"
+}
+$summary = [ordered]@{
+  schema_version = 1
+  standard = "RFC 6570"
+  supported_level = 4
+  upstream_repository = "https://github.com/uri-templates/uritemplate-test"
+  upstream_commit = "4171dac22aa67fc710b3f6df308a50bd08552986"
+  generated_tests = $testNumber
+  expected_rejections = $rejectionCount
+  fixtures = $fixtureSummary
+}
+$summaryJson = $summary | ConvertTo-Json -Depth 5
+[IO.File]::WriteAllText(
+  $absoluteSummary,
+  $summaryJson + [Environment]::NewLine,
+  $encoding
+)
+Write-Output (
+  "Generated $testNumber conformance tests and summary at " +
+  "$absoluteOutput and $absoluteSummary"
+)

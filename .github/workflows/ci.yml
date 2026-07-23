@@ -29,7 +29,8 @@ jobs:
         run: |
           ./tools/generate_conformance_tests.ps1
           moon fmt conformance_generated_wbtest.mbt
-          git diff --exit-code -- conformance_generated_wbtest.mbt
+          git diff --exit-code -- \
+            conformance_generated_wbtest.mbt conformance-summary.json
 
       - name: Check formatting and public API
         run: |
@@ -39,3 +40,9 @@ jobs:
 
       - name: Test every supported backend
         run: moon test --target all
+
+      - name: Differential test against mature implementations
+        run: |
+          python -m pip install --require-hashes \
+            -r tools/differential/requirements.txt
+          python tools/differential/compare.py

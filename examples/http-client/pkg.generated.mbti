@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "yelfs/moon-uri-template/examples/http-client"
+
+// Values
+
+// Errors
+
+// Types and methods
+type IssuesRequest
+
+// Type aliases
+
+// Traits
+

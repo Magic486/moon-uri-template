@@ -10,6 +10,12 @@ encoding, structured errors, JSON variables, and a CLI.
 The module currently uses the provisional namespace
 `yelfs/moon-uri-template`. It will be confirmed before publication.
 
+## Installation
+
+Before the first mooncakes.io release, clone the repository and run
+`moon update`. The final `moon add` command will be documented after the
+package namespace is confirmed.
+
 ## Example
 
 ```mbt
@@ -48,6 +54,8 @@ The project vendors the Apache-2.0
 [`uri-templates/uritemplate-test`](https://github.com/uri-templates/uritemplate-test)
 fixtures at commit `4171dac22aa67fc710b3f6df308a50bd08552986`.
 The generated suite contributes 153 interoperability cases.
+A deterministic [machine-readable summary](conformance-summary.json) records
+the fixture and expected-rejection counts.
 
 ```bash
 moon check --warn-list +73
@@ -59,13 +67,33 @@ moon info
 The complete public guide with tested examples is
 [README.mbt.md](README.mbt.md). See [SPEC.md](SPEC.md) for normative scope,
 [GOALS.md](GOALS.md) for milestones, and [THIRD_PARTY.md](THIRD_PARTY.md) for
-attribution.
+attribution. Reproducible performance cases and the first local baseline are
+documented in [BENCHMARKS.md](BENCHMARKS.md).
+The [differential suite](DIFFERENTIAL_TESTING.md) compares representative
+expansions byte-for-byte with two independently maintained implementations.
+
+## Resource limits
+
+`UriTemplate::parse` uses documented defaults: a 1 MiB template, 4,096
+expressions, and 256 variables per expression. Applications accepting
+untrusted templates can call `UriTemplate::parse_with_limits` to set smaller
+per-call bounds. `UriTemplate::expand` limits output to 1 MiB;
+`expand_with_limit` accepts an explicit smaller or larger bound. No global
+mutable configuration is used.
+
+The executable [HTTP client example](examples/http-client/main.mbt) shows how
+an SDK request model maps typed fields to an RFC 6570 endpoint:
+
+```bash
+moon run examples/http-client
+```
 
 ## Security
 
 URI Template expansion is not input validation. In particular, `{+var}` and
 `{#var}` permit URI reserved characters. Apply a separate destination policy
-before using expanded, untrusted values for network requests.
+before using expanded, untrusted values for SSRF-sensitive network requests.
+Structured errors do not echo the complete variable map.
 
 ## License
 

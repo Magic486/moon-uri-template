@@ -91,8 +91,10 @@ advance by two MoonBit UTF-16 code units but count as one RFC character.
 The output is ASCII after expansion, so the final `String::length` is also the
 encoded URI character count.
 
-Future parser limits should follow the same explicit, per-call model rather
-than global mutable configuration.
+`UriTemplate::parse` applies defaults of 1 MiB of template text, 4,096
+expressions, and 256 variables per expression. `parse_with_limits` exposes all
+three bounds explicitly per call. Neither parsing nor expansion relies on
+global mutable configuration.
 
 ## JSON adapter
 

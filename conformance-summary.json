@@ -1,0 +1,23 @@
+{
+    "schema_version":  1,
+    "standard":  "RFC 6570",
+    "supported_level":  4,
+    "upstream_repository":  "https://github.com/uri-templates/uritemplate-test",
+    "upstream_commit":  "4171dac22aa67fc710b3f6df308a50bd08552986",
+    "generated_tests":  153,
+    "expected_rejections":  36,
+    "fixtures":  {
+                     "spec-examples.json":  {
+                                                "tests":  64,
+                                                "expected_rejections":  0
+                                            },
+                     "extended-tests.json":  {
+                                                 "tests":  53,
+                                                 "expected_rejections":  0
+                                             },
+                     "negative-tests.json":  {
+                                                 "tests":  36,
+                                                 "expected_rejections":  36
+                                             }
+                 }
+}

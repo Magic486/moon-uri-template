@@ -6,7 +6,13 @@ import {
 }
 
 // Values
+pub const DEFAULT_MAX_EXPRESSIONS : Int = 4096
+
 pub const DEFAULT_MAX_OUTPUT_LENGTH : Int = 1048576
+
+pub const DEFAULT_MAX_TEMPLATE_LENGTH : Int = 1048576
+
+pub const DEFAULT_MAX_VARIABLES_PER_EXPRESSION : Int = 256
 
 pub fn is_valid(StringView) -> Bool
 
@@ -16,6 +22,7 @@ pub fn variables_from_json(Json) -> Map[String, UriValue] raise UriTemplateError
 pub(all) suberror UriTemplateError {
   SyntaxError(offset~ : Int, message~ : String)
   InvalidValue(variable~ : String, message~ : String)
+  ParseLimitExceeded(kind~ : String, limit~ : Int)
   OutputLimitExceeded(limit~ : Int)
 } derive(@debug.Debug)
 pub impl Show for UriTemplateError
@@ -37,6 +44,7 @@ pub fn UriTemplate::expand(Self, Map[String, UriValue]) -> String raise UriTempl
 pub fn UriTemplate::expand_with_limit(Self, Map[String, UriValue], max_output_length~ : Int) -> String raise UriTemplateError
 pub fn UriTemplate::level(Self) -> Int
 pub fn UriTemplate::parse(StringView) -> Self raise UriTemplateError
+pub fn UriTemplate::parse_with_limits(StringView, max_template_length~ : Int, max_expressions~ : Int, max_variables_per_expression~ : Int) -> Self raise UriTemplateError
 pub fn UriTemplate::source(Self) -> String
 pub fn UriTemplate::variables(Self) -> Array[String]
 
