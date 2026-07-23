@@ -75,6 +75,9 @@ try {
   Invoke-Step "Generate and review public API summary" { moon info }
   Invoke-Step "Build every supported backend" { moon build --target all }
   Invoke-Step "Test every supported backend" { moon test --target all }
+  Invoke-Step "Smoke-test CLI process behavior" {
+    powershell -NoProfile -ExecutionPolicy Bypass -File tools/smoke_cli.ps1
+  }
   Invoke-Step "Verify publish archive contents" {
     $packageCheckArgs = @(
       "-NoProfile",

@@ -1,11 +1,17 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "yelfs/moon-uri-template/cmd/uri-template"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
+type CliError derive(@debug.Debug)
 
 // Types and methods
+type CliCommand derive(Eq, @debug.Debug)
 
 // Type aliases
 

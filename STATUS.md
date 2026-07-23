@@ -36,14 +36,17 @@ remote GitHub, Gitlink, or mooncakes.io state has been completed.
 - [x] `moon info`
 - [x] `moon build --target all`
 - [x] Coverage audit
+- [x] Unit-tested CLI command core and process-level CLI smoke tests
 
 Most recent local result:
 
 ```text
-187 tests passed on each of wasm, wasm-gc, JavaScript, and native.
+194 tests passed on each of wasm, wasm-gc, JavaScript, and native.
 Core library coverage: 349/351 instrumented lines (99.43%).
-The remaining 42 uncovered lines are executable entry paths (39 CLI, 3 example)
-plus 2 defensive aborts that guard impossible internal states.
+Whole-project coverage: 394/413 instrumented lines (95.40%).
+The remaining lines are process-exit/printing paths, 3 example-main lines, and
+2 defensive aborts that guard impossible internal states. CLI exit behavior is
+also verified by process-level smoke tests outside coverage instrumentation.
 ```
 
 ## Documentation and compliance

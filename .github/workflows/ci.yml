@@ -45,6 +45,10 @@ jobs:
       - name: Test every supported backend
         run: moon test --target all
 
+      - name: Smoke-test CLI process behavior
+        shell: pwsh
+        run: ./tools/smoke_cli.ps1
+
       - name: Differential test against mature implementations
         run: |
           python -m pip install --require-hashes \
