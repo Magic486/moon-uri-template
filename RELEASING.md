@@ -80,3 +80,9 @@ Submit:
 
 The proposal must be regenerated after replacing its provisional namespace
 and adding the project GitHub URL.
+
+```powershell
+python tools/generate_proposal_pdf.py `
+  --namespace "USERNAME/moon-uri-template" `
+  --repository "https://github.com/OWNER/moon-uri-template"
+```

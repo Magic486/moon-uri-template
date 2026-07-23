@@ -1,5 +1,6 @@
 """Generate the one-page OSC 2026 project proposal PDF."""
 
+import argparse
 from pathlib import Path
 
 from reportlab.lib.colors import HexColor, white
@@ -93,6 +94,19 @@ def bullet(
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--namespace",
+        default="yelfs/moon-uri-template",
+        help="Final mooncakes namespace",
+    )
+    parser.add_argument(
+        "--repository",
+        default="待确认后更新",
+        help="Public GitHub repository URL",
+    )
+    args = parser.parse_args()
+
     if not FONT_REGULAR.exists() or not FONT_BOLD.exists():
         raise SystemExit("Microsoft YaHei fonts are required to generate the PDF")
     pdfmetrics.registerFont(TTFont("MSYH", str(FONT_REGULAR), subfontIndex=0))
@@ -229,8 +243,13 @@ def main():
     canvas.line(margin, 78, width - margin, 78)
     canvas.setFillColor(MUTED)
     canvas.setFont("MSYH", 7.3)
-    canvas.drawString(margin, 61, "暂定模块：yelfs/moon-uri-template · 许可证：MIT")
-    canvas.drawRightString(width - margin, 61, "生成日期：2026-07-23")
+    canvas.drawString(
+        margin,
+        63,
+        f"项目性质：原创实现 · 模块：{args.namespace} · 许可证：MIT",
+    )
+    canvas.drawString(margin, 49, f"GitHub：{args.repository}")
+    canvas.drawRightString(width - margin, 49, "生成日期：2026-07-23")
     canvas.save()
     print(OUTPUT)
 
