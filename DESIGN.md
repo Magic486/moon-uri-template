@@ -13,9 +13,11 @@ template source
   → UTF-8 percent-encoded URI reference
 ```
 
-The root package owns every public concrete type. Parser, encoder, and
-expansion helpers are private implementation details even though they are
-split into focused files in the same MoonBit package.
+The root package owns every public concrete type. Parser, expansion helpers,
+and operator definitions are private implementation details split into focused
+files in the root package. Encoding utilities (character classification,
+percent-encoding, prefix handling) live in the internal sub-package to keep
+the root package lean and avoid tight coupling between files.
 
 ## Public model
 

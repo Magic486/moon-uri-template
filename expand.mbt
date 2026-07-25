@@ -25,10 +25,10 @@ fn expand_scalar(
   value : String,
 ) -> Array[String] {
   let value = match variable.modifier {
-    Prefix(length) => prefix_value(value, length)
+    Prefix(length) => @internal.prefix_value(value, length)
     NoModifier | Explode => value
   }
-  let encoded = encode_value(value, operator.allow_reserved())
+  let encoded = @internal.encode_value(value, operator.allow_reserved())
   [named_value(operator, variable.name, encoded)]
 }
 
@@ -46,14 +46,16 @@ fn expand_list(
       )
     NoModifier => {
       let encoded = values
-        .map(fn(value) { encode_value(value, operator.allow_reserved()) })
+        .map(fn(value) {
+          @internal.encode_value(value, operator.allow_reserved())
+        })
         .join(",")
       [named_value(operator, variable.name, encoded)]
     }
     Explode => {
       let result : Array[String] = []
       for value in values {
-        let encoded = encode_value(value, operator.allow_reserved())
+        let encoded = @internal.encode_value(value, operator.allow_reserved())
         if operator.named() {
           result.push(named_value(operator, variable.name, encoded))
         } else {
@@ -81,17 +83,19 @@ fn expand_assoc(
       let flattened : Array[String] = []
       for pair in values {
         let (key, value) = pair
-        flattened.push(encode_value(key, operator.allow_reserved()))
-        flattened.push(encode_value(value, operator.allow_reserved()))
+        flattened.push(@internal.encode_value(key, operator.allow_reserved()))
+        flattened.push(@internal.encode_value(value, operator.allow_reserved()))
       }
       [named_value(operator, variable.name, flattened.join(","))]
     }
     Explode => {
+      // Per RFC 6570 §3.2.5, exploded associative arrays always use key=value
+      // form regardless of operator, so operator.named() is not checked here.
       let result : Array[String] = []
       for pair in values {
         let (key, value) = pair
-        let key = encode_value(key, operator.allow_reserved())
-        let value = encode_value(value, operator.allow_reserved())
+        let key = @internal.encode_value(key, operator.allow_reserved())
+        let value = @internal.encode_value(value, operator.allow_reserved())
         if value.is_empty() {
           result.push(key + operator.empty_suffix())
         } else {
@@ -148,7 +152,7 @@ pub fn UriTemplate::expand_with_limit(
   let mut produced = 0
   for part in self.parts {
     let expanded = match part {
-      Literal(value) => encode_value(value, true)
+      Literal(value) => @internal.encode_value(value, true)
       Expression(operator, variable_specs) =>
         expand_expression(operator, variable_specs, variables)
     }

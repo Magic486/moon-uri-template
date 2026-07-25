@@ -8,7 +8,7 @@ ordered scalar/list/associative values, Unicode-aware prefixes, UTF-8 percent
 encoding, structured errors, JSON variables, and a CLI.
 
 The module currently uses the provisional namespace
-`yelfs/moon-uri-template`. It will be confirmed before publication.
+`Magic486/moon-uri-template`.
 
 ## Installation
 

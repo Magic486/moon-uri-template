@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-07-25
 
 - Implement RFC 6570 Level 1–4 parsing and expansion.
 - Add scalar, ordered list, and ordered associative variable values.

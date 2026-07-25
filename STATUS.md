@@ -67,7 +67,7 @@ also verified by process-level smoke tests outside coverage instrumentation.
 ## Remaining external or release work
 
 - [ ] Confirm the final GitHub/mooncakes namespace instead of provisional
-  `yelfs/moon-uri-template`
+  `Magic486/moon-uri-template`
 - [ ] Add the final repository URL to `moon.mod`
 - [ ] Push the repository to a public GitHub remote
 - [ ] Create or synchronize the required Gitlink repository

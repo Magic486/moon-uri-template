@@ -1,10 +1,10 @@
-name = "yelfs/moon-uri-template"
+name = "Magic486/moon-uri-template"
 
 version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/Magic486/moon-uri-template"
 
 license = "MIT"
 

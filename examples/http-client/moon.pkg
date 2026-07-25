@@ -1,5 +1,5 @@
 import {
-  "yelfs/moon-uri-template" @uri,
+  "Magic486/moon-uri-template" @uri,
 }
 
 pkgtype(kind: "executable")

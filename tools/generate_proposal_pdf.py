@@ -97,7 +97,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--namespace",
-        default="yelfs/moon-uri-template",
+        default="Magic486/moon-uri-template",
         help="Final mooncakes namespace",
     )
     parser.add_argument(

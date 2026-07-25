@@ -433,38 +433,40 @@ moon-uri-template inspect TEMPLATE
 
 ## 12. 包与文件组织
 
-建议结构：
+实际结构：
 
 ```text
 moon-uri-template/
 ├── moon.mod
 ├── moon.pkg
 ├── README.mbt.md
+├── README.md
 ├── LICENSE
-├── types.mbt
-├── template.mbt
-├── value.mbt
-├── error.mbt
-├── template_test.mbt
-├── encoding_test.mbt
-├── compliance_test.mbt
+├── types.mbt              # 公开类型 (UriTemplate, UriValue, Operator, …)
+├── error.mbt              # 公开错误类型
+├── parser.mbt             # 解析与校验 API
+├── expand.mbt             # 展开 API
+├── operator.mbt           # 操作符定义
+├── json_adapter.mbt       # JSON → UriValue 适配器
+├── *_wbtest.mbt           # 白盒与兼容性测试（同包访问私有类型）
+├── *_test.mbt             # 黑盒测试
 ├── internal/
-│   ├── parser/
-│   ├── encoding/
-│   └── expansion/
+│   ├── moon.pkg
+│   └── encoding.mbt       # 字符分类、UTF-8、百分号编码
 ├── cmd/
 │   └── uri-template/
-└── examples/
+├── examples/
+├── testdata/
+└── tools/
 ```
 
 规则：
 
 - 根包拥有公共 `UriTemplate`、`UriValue` 和错误类型；
-- `internal/parser` 只负责语法；
 - `internal/encoding` 只负责字符分类、UTF-8 与百分号编码；
-- `internal/expansion` 负责操作符规则和展开；
+- 解析器与展开逻辑保持在根包中，因为这些模块之间共享私有类型；
+- 白盒测试（使用私有类型）留在根包中；黑盒测试按文件后缀 `_wbtest.mbt` 与 `_test.mbt` 区分；
 - CLI 不得包含核心展开逻辑；
-- 测试文件按解析、编码、展开、兼容性拆分；
 - 不创建巨型 `util.mbt` 或 `impl.mbt`。
 
 ## 13. 测试与符合性

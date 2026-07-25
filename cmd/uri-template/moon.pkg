@@ -1,5 +1,5 @@
 import {
-  "yelfs/moon-uri-template" @uri,
+  "Magic486/moon-uri-template" @uri,
   "moonbitlang/core/json",
   "moonbitlang/x/fs",
   "moonbitlang/x/sys",

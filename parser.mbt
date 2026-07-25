@@ -4,26 +4,6 @@ fn syntax_error(offset : Int, message : String) -> UriTemplateError {
 }
 
 ///|
-fn is_ascii_alpha(ch : UInt16) -> Bool {
-  (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')
-}
-
-///|
-fn is_ascii_digit(ch : UInt16) -> Bool {
-  ch >= '0' && ch <= '9'
-}
-
-///|
-fn is_hex_digit(ch : UInt16) -> Bool {
-  is_ascii_digit(ch) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f')
-}
-
-///|
-fn owned_slice(source : String, start : Int, end : Int) -> String {
-  source[start:end].to_owned()
-}
-
-///|
 fn validate_literal_at(
   source : String,
   offset : Int,
@@ -31,8 +11,8 @@ fn validate_literal_at(
   let ch = source[offset]
   if ch == '%' {
     if offset + 2 >= source.length() ||
-      !is_hex_digit(source[offset + 1]) ||
-      !is_hex_digit(source[offset + 2]) {
+      !@internal.is_hex_digit(source[offset + 1]) ||
+      !@internal.is_hex_digit(source[offset + 2]) {
       raise syntax_error(offset, "invalid percent triplet in literal text")
     }
     return
@@ -67,7 +47,7 @@ fn parse_variable_spec(
     if ch == '*' || ch == ':' {
       break
     }
-    if is_ascii_alpha(ch) || is_ascii_digit(ch) || ch == '_' {
+    if @internal.is_ascii_alpha(ch) || @internal.is_ascii_digit(ch) || ch == '_' {
       last_was_dot = false
       i += 1
       continue
@@ -82,8 +62,8 @@ fn parse_variable_spec(
     }
     if ch == '%' {
       if i + 2 >= end ||
-        !is_hex_digit(source[i + 1]) ||
-        !is_hex_digit(source[i + 2]) {
+        !@internal.is_hex_digit(source[i + 1]) ||
+        !@internal.is_hex_digit(source[i + 2]) {
         raise syntax_error(i, "invalid percent triplet in variable name")
       }
       last_was_dot = false
@@ -95,7 +75,7 @@ fn parse_variable_spec(
   if i == start || last_was_dot {
     raise syntax_error(i, "invalid variable name")
   }
-  let name = owned_slice(source, start, i)
+  let name = @internal.owned_slice(source, start, i)
   let modifier = if i == end {
     NoModifier
   } else if source[i] == '*' {
@@ -115,7 +95,7 @@ fn parse_variable_spec(
     }
     let mut length = 0
     for j in digit_start..<end {
-      if !is_ascii_digit(source[j]) {
+      if !@internal.is_ascii_digit(source[j]) {
         raise syntax_error(j, "prefix length must contain only digits")
       }
       length = length * 10 + (source[j].to_int() - '0'.to_int())
@@ -221,7 +201,7 @@ pub fn UriTemplate::parse_with_limits(
       continue
     }
     if literal_start < i {
-      parts.push(Literal(owned_slice(source, literal_start, i)))
+      parts.push(Literal(@internal.owned_slice(source, literal_start, i)))
     }
     expression_count += 1
     if expression_count > max_expressions {
@@ -257,7 +237,9 @@ pub fn UriTemplate::parse_with_limits(
     literal_start = i
   }
   if literal_start < source.length() {
-    parts.push(Literal(owned_slice(source, literal_start, source.length())))
+    parts.push(
+      Literal(@internal.owned_slice(source, literal_start, source.length())),
+    )
   }
   { source, parts, variables: variable_names, level }
 }

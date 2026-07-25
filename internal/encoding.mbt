@@ -1,4 +1,24 @@
 ///|
+pub fn is_ascii_alpha(ch : UInt16) -> Bool {
+  (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')
+}
+
+///|
+pub fn is_ascii_digit(ch : UInt16) -> Bool {
+  ch >= '0' && ch <= '9'
+}
+
+///|
+pub fn is_hex_digit(ch : UInt16) -> Bool {
+  is_ascii_digit(ch) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f')
+}
+
+///|
+pub fn owned_slice(source : String, start : Int, end : Int) -> String {
+  source[start:end].to_owned()
+}
+
+///|
 fn is_unreserved_byte(byte : Byte) -> Bool {
   let value = byte.to_int()
   (value >= 'A'.to_int() && value <= 'Z'.to_int()) ||
@@ -36,9 +56,10 @@ fn is_reserved_byte(byte : Byte) -> Bool {
 }
 
 ///|
+/// Callers guarantee 0 <= value <= 15.
 fn hex_char(value : Int) -> Char {
   guard "0123456789ABCDEF".get_char(value) is Some(ch) else {
-    abort("hex digit out of range")
+    abort("unreachable: hex_char called with value outside 0-15")
   }
   ch
 }
@@ -60,7 +81,7 @@ fn write_percent_encoded(builder : StringBuilder, byte : Byte) -> Unit {
 }
 
 ///|
-fn encode_value(value : String, allow_reserved : Bool) -> String {
+pub fn encode_value(value : String, allow_reserved : Bool) -> String {
   let bytes = @utf8.encode(value)
   let builder = StringBuilder(size_hint=bytes.length())
   for i in 0..<bytes.length() {
@@ -81,7 +102,7 @@ fn encode_value(value : String, allow_reserved : Bool) -> String {
 }
 
 ///|
-fn prefix_value(value : String, max_chars : Int) -> String {
+pub fn prefix_value(value : String, max_chars : Int) -> String {
   let mut offset = 0
   let mut count = 0
   for ; offset < value.length() && count < max_chars; {
@@ -92,7 +113,7 @@ fn prefix_value(value : String, max_chars : Int) -> String {
       offset += 3
     } else {
       guard value.get_char(offset) is Some(ch) else {
-        abort("invalid UTF-16 boundary while taking URI Template prefix")
+        abort("unreachable: invalid UTF-16 boundary in MoonBit string")
       }
       offset += if ch.to_int() > 0xFFFF { 2 } else { 1 }
     }

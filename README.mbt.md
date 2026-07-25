@@ -8,9 +8,8 @@ typed scalar, list, or associative values. It is intended as reusable
 infrastructure for HTTP clients, OpenAPI tooling, SDK generators, hypermedia
 APIs, and cross-target MoonBit applications.
 
-The module currently uses the provisional namespace
-`yelfs/moon-uri-template`. The namespace and repository URL will be confirmed
-before the first mooncakes.io release.
+The module is published under the namespace
+`Magic486/moon-uri-template`.
 
 ## Installation
 
