@@ -23,13 +23,13 @@ try {
   }
   $listing = @($rawListing | ForEach-Object { $_.ToString() })
   $listing | ForEach-Object { Write-Output $_ }
-  $text = $listing -join "`n"
+  $text = ($listing -join "`n") -replace '\\', '/'
 
   $required = @(
     "LICENSE",
     "README.mbt.md",
     "pkg.generated.mbti",
-    "cmd\uri-template\main.mbt"
+    "cmd/uri-template/main.mbt"
   )
   foreach ($path in $required) {
     $pattern = "(?m)^" + [regex]::Escape($path) + "\r?$"

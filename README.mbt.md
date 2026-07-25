@@ -1,47 +1,42 @@
 # moon-uri-template
 
-A pure MoonBit implementation of
-[RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) Level 4 URI Templates.
+基于 MoonBit 纯实现的
+[RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) Level 4 URI Template 库。
 
-`moon-uri-template` parses a URI Template once and expands it repeatedly with
-typed scalar, list, or associative values. It is intended as reusable
-infrastructure for HTTP clients, OpenAPI tooling, SDK generators, hypermedia
-APIs, and cross-target MoonBit applications.
+`moon-uri-template` 将 URI 模板解析一次后，可反复使用类型化的标量、列表或关联数组
+值进行展开。适用于 HTTP 客户端、OpenAPI 工具、SDK 生成器、超媒体 API 以及
+跨后端 MoonBit 应用。
 
-The module is published under the namespace
-`Magic486/moon-uri-template`.
+命名空间：`Magic486/moon-uri-template`。
 
-## Installation
+## 安装
 
-Until the first mooncakes.io release, clone this repository and resolve its
-locked dependencies:
+在 mooncakes.io 的首个版本发布之前，请克隆本仓库并安装锁定的依赖：
 
 ```bash
 moon update
 ```
 
-Applications in the same module can import the root package directly. After
-publication, the final `moon add` command will be added here together with the
-confirmed namespace and repository URL.
+同一模块中的应用可直接导入根包。
 
-## Features
+## 功能特性
 
 - RFC 6570 Levels 1–4
-- All standard operators: simple, `+`, `#`, `.`, `/`, `;`, `?`, and `&`
-- Prefix and explode modifiers
-- Ordered scalar, list, and associative values
-- Unicode code-point-aware prefixes
-- UTF-8 percent encoding
-- Structured errors with source offsets
-- Explicit parser and expanded-output resource limits
-- Deterministic expansion on Wasm, Wasm-GC, JavaScript, and Native
-- JSON variable adapter
-- `validate`, `variables`, `inspect`, and `expand` CLI commands
-- 153 vendored interoperability cases plus project-specific tests
+- 全部标准操作符：简单展开、`+`、`#`、`.`、`/`、`;`、`?`、`&`
+- Prefix 与 Explode 修饰符
+- 有序的标量、列表和关联数组值
+- Unicode 码点感知的 Prefix 截取
+- UTF-8 百分号编码
+- 带源位置信息的结构化错误
+- 显式的解析器与展开输出资源限制
+- Wasm、Wasm-GC、JavaScript、Native 四后端确定性展开
+- JSON 变量适配器
+- `validate`、`variables`、`inspect`、`expand` 四个 CLI 命令
+- 153 个引入的标准互操作性测试用例及项目专属测试
 
-## Library example
+## 库示例
 
-The smallest scalar expansion parses once and supplies a typed value:
+最小标量展开——解析一次并传入类型化值：
 
 ```mbt check
 ///|
@@ -54,7 +49,7 @@ test "expand one scalar" {
 }
 ```
 
-A realistic endpoint can combine path, query, and exploded list values:
+真实端点可组合路径、查询参数和列表展开：
 
 ```mbt check
 ///|
@@ -75,7 +70,7 @@ test "expand a repository issues URI" {
 }
 ```
 
-## Value model
+## 值模型
 
 ```mbt nocheck
 ///|
@@ -86,11 +81,10 @@ pub(all) enum UriValue {
 }
 ```
 
-Lists and associative arrays retain input order. A missing map entry represents
-an undefined variable. Empty strings remain defined; empty lists and empty
-associative arrays are treated as undefined by RFC 6570 expansion.
+列表和关联数组保留输入顺序。Map 中不存在的条目表示未定义变量。空字符串视为已定义；
+空列表和空关联数组在 RFC 6570 展开中被视为未定义。
 
-### Prefix modifier
+### Prefix 修饰符
 
 ```mbt check
 ///|
@@ -103,7 +97,7 @@ test "prefix length counts Unicode code points" {
 }
 ```
 
-### Explode modifier
+### Explode 修饰符
 
 ```mbt check
 ///|
@@ -116,8 +110,7 @@ test "explode a list into repeated query parameters" {
 }
 ```
 
-Associative values preserve pair order and can be exploded into named query
-parameters:
+关联数组保留键值对顺序，并可展开为命名查询参数：
 
 ```mbt check
 ///|
@@ -130,11 +123,10 @@ test "expand an associative value" {
 }
 ```
 
-## Resource limits
+## 资源限制
 
-`UriTemplate::parse` accepts templates up to 1 MiB, with at most 4,096
-expressions and 256 variables in one expression. Servers and tools accepting
-untrusted templates can apply stricter per-request limits:
+`UriTemplate::parse` 接受最大 1 MiB 的模板，最多包含 4096 个表达式和每个表达式
+256 个变量。接受不可信模板的服务和工具可使用更严格的每次调用上限：
 
 ```mbt check
 ///|
@@ -149,14 +141,12 @@ test "parse with application-specific limits" {
 }
 ```
 
-Expansion is independently bounded to 1 MiB by default. Use
-`expand_with_limit` when an application requires a different explicit limit.
+展开默认限制为 1 MiB。当应用需要不同的显式限制时，可使用 `expand_with_limit`。
 
-## Error handling
+## 错误处理
 
-Parsing and expansion return structured `UriTemplateError` values. Syntax
-errors carry a UTF-16 source offset; value and limit errors identify their
-category without echoing the complete variable map.
+解析与展开返回结构化的 `UriTemplateError` 值。语法错误携带 UTF-16 源偏移量；
+值错误和限制错误标识其类别，但不回显完整变量集合。
 
 ```mbt check
 ///|
@@ -171,16 +161,15 @@ test "handle a syntax error with its source offset" {
 }
 ```
 
-## JSON variables
+## JSON 变量
 
-`variables_from_json` accepts a JSON object:
+`variables_from_json` 接受一个 JSON 对象：
 
-- string → `Scalar`
-- array of strings → `List`
-- object with string values → ordered `Assoc`
+- 字符串 → `Scalar`
+- 字符串数组 → `List`
+- 字符串值对象 → 有序 `Assoc`
 
-Numbers, booleans, null, nested arrays, and non-string associative values are
-rejected rather than implicitly stringified.
+数字、布尔值、null、嵌套数组和非字符串关联值将被拒绝，不做隐式字符串化。
 
 ```json
 {
@@ -193,7 +182,7 @@ rejected rather than implicitly stringified.
 
 ## CLI
 
-Run from this repository:
+从本仓库运行：
 
 ```bash
 moon run cmd/uri-template -- validate '/repos/{owner}/{repo}{?page}'
@@ -204,28 +193,28 @@ moon run cmd/uri-template -- expand \
   --variables examples/variables.json
 ```
 
-The expansion command prints:
+展开命令输出：
 
 ```text
 /repos/moonbitlang/core/issues?page=2&labels=bug&labels=help%20wanted
 ```
 
-## Standards conformance
+## 标准符合性
 
-The project vendors the Apache-2.0
+项目引入了 Apache-2.0 许可的
 [`uri-templates/uritemplate-test`](https://github.com/uri-templates/uritemplate-test)
-fixtures at commit `4171dac22aa67fc710b3f6df308a50bd08552986`.
+测试集（固定于 commit `4171dac22aa67fc710b3f6df308a50bd08552986`）。
 
-The fixture generator produces 153 MoonBit tests covering:
+测试生成器生成 153 个 MoonBit 测试，覆盖：
 
-- RFC specification examples
-- extended interoperability cases
-- negative and invalid-template cases
-- multibyte prefix handling
-- reserved and percent-encoded values
-- literal encoding
+- RFC 规范示例
+- 扩展的互操作用例
+- 非法模板和负向测试
+- 多字节字符的 Prefix 处理
+- 保留字符和百分号编码值
+- 文字编码
 
-Run:
+运行：
 
 ```bash
 powershell -NoProfile -ExecutionPolicy Bypass \
@@ -233,26 +222,24 @@ powershell -NoProfile -ExecutionPolicy Bypass \
 moon test --target all
 ```
 
-All generated and local tests currently pass on Wasm, Wasm-GC, JavaScript, and
-Native with the MoonBit 2026-07-03 toolchain.
+所有生成及本地测试当前在 Wasm、Wasm-GC、JavaScript 和 Native 后端均通过，
+使用的 MoonBit 工具链为 2026-07-03 版本。
 
-## Security boundary
+## 安全边界
 
-URI Template expansion is not input validation or authorization.
+URI Template 展开不是输入校验或授权。
 
-- `{+var}` and `{#var}` intentionally allow URI reserved characters.
-- Do not use expanded, untrusted URIs for SSRF-sensitive requests without a
-  separate scheme, host, port, and destination policy.
-- Errors do not include the complete variable map.
-- `expand` enforces a default output limit of 1 MiB.
-- `expand_with_limit` allows applications to set a tighter limit.
-- `parse_with_limits` bounds template length, expression count, and variables
-  per expression when templates are untrusted.
+- `{+var}` 和 `{#var}` 刻意允许 URI 保留字符；
+- 不可在对不可信展开值发起 SSRF 敏感网络请求前，先应用独立的 scheme、host、port 和
+  目标策略；
+- 错误信息不包含完整变量集合；
+- `expand` 强制施加 1 MiB 的默认输出限制；
+- `expand_with_limit` 允许应用设置更严格的限制；
+- `parse_with_limits` 在模板不可信时可限制模板长度、表达式数量和每个表达式的变量数。
 
-The library does not send HTTP requests, resolve relative references, check
-whether resources exist, or reverse-match a URI into variables.
+本库不发送 HTTP 请求、不解析相对引用、不检查资源是否存在，也不从 URI 反向匹配变量。
 
-## Development
+## 开发
 
 ```bash
 moon check --warn-list +73
@@ -261,12 +248,9 @@ moon fmt --check
 moon info
 ```
 
-Project scope and acceptance requirements are defined in
-[SPEC.md](docs/SPEC.md). Delivery priorities and milestones are tracked in
-[GOALS.md](docs/GOALS.md). Third-party attribution is recorded in
-[THIRD_PARTY.md](docs/THIRD_PARTY.md).
+项目范围和验收要求在 [SPEC.md](docs/SPEC.md) 中定义。交付优先级和里程碑在
+[GOALS.md](docs/GOALS.md) 中跟踪。第三方声明记录在 [THIRD_PARTY.md](docs/THIRD_PARTY.md)。
 
-## License
+## 许可证
 
-Project code is available under the MIT License. Vendored conformance fixtures
-retain their upstream Apache-2.0 license.
+项目代码以 MIT 许可证提供。引入的标准测试集保留上游 Apache-2.0 许可证。

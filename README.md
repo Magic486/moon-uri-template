@@ -1,22 +1,18 @@
 # moon-uri-template
 
-A pure MoonBit implementation of
-[RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) Level 4 URI Templates.
+基于 MoonBit 纯实现的 [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) Level 4 URI Template 库。
 
-The library supports every RFC 6570 operator, prefix and explode modifiers,
-ordered scalar/list/associative values, Unicode-aware prefixes, UTF-8 percent
-encoding, structured errors, JSON variables, and a CLI.
+支持全部 RFC 6570 操作符、prefix 与 explode 修饰符、有序标量/列表/关联数组值、
+Unicode 码点感知截取、UTF-8 百分号编码、结构化错误、JSON 变量适配器及 CLI 工具。
 
-The module currently uses the provisional namespace
-`Magic486/moon-uri-template`.
+命名空间：`Magic486/moon-uri-template`。
 
-## Installation
+## 安装
 
-Before the first mooncakes.io release, clone the repository and run
-`moon update`. The final `moon add` command will be documented after the
-package namespace is confirmed.
+首个 mooncakes.io 版本发布前，请克隆仓库并执行 `moon update`。确认命名空间后，
+最终 `moon add` 命令将在此处更新。
 
-## Example
+## 示例
 
 ```mbt
 let template = @moon-uri-template.UriTemplate::parse(
@@ -31,7 +27,7 @@ let variables : Map[String, @moon-uri-template.UriValue] = {
 let uri = template.expand(variables)
 ```
 
-Result:
+结果：
 
 ```text
 /repos/moonbitlang/core/issues?page=2&labels=bug&labels=help%20wanted
@@ -48,14 +44,13 @@ moon run cmd/uri-template -- expand \
   --variables examples/variables.json
 ```
 
-## Verification
+## 验证
 
-The project vendors the Apache-2.0
+项目引入了 Apache-2.0 许可的
 [`uri-templates/uritemplate-test`](https://github.com/uri-templates/uritemplate-test)
-fixtures at commit `4171dac22aa67fc710b3f6df308a50bd08552986`.
-The generated suite contributes 153 interoperability cases.
-A deterministic [machine-readable summary](conformance-summary.json) records
-the fixture and expected-rejection counts.
+测试集（固定于 commit `4171dac22aa67fc710b3f6df308a50bd08552986`）。
+生成的测试套件贡献 153 个互操作性用例。
+[conformance-summary.json](conformance-summary.json) 记录了测试数据和预期拒绝计数。
 
 ```bash
 moon check --warn-list +73
@@ -64,41 +59,34 @@ moon fmt --check
 moon info
 ```
 
-The complete public guide with tested examples is
-[README.mbt.md](README.mbt.md). See [SPEC.md](docs/SPEC.md) for normative scope,
-[GOALS.md](docs/GOALS.md) for milestones, and [THIRD_PARTY.md](docs/THIRD_PARTY.md) for
-attribution. Reproducible performance cases and the first local baseline are
-documented in [BENCHMARKS.md](docs/BENCHMARKS.md).
-The [differential suite](docs/DIFFERENTIAL_TESTING.md) compares representative
-expansions byte-for-byte with two independently maintained implementations.
-The current one-page contest application is available at
-[output/pdf/moon-uri-template-project-proposal.pdf](output/pdf/moon-uri-template-project-proposal.pdf).
-Release and GitHub/Gitlink synchronization steps are documented in
-[RELEASING.md](docs/RELEASING.md).
+完整的公开指南（含可运行测试示例）见 [README.mbt.md](README.mbt.md)。
+规范范围见 [SPEC.md](docs/SPEC.md)，里程碑见 [GOALS.md](docs/GOALS.md)，
+第三方声明见 [THIRD_PARTY.md](docs/THIRD_PARTY.md)。
+可复现的性能基准见 [BENCHMARKS.md](docs/BENCHMARKS.md)。
+[差异测试](docs/DIFFERENTIAL_TESTING.md) 与两个独立维护的实现逐字节对比展开结果。
+项目申报书见 [output/pdf/moon-uri-template-project-proposal.pdf](output/pdf/moon-uri-template-project-proposal.pdf)。
+发布与 GitHub 同步步骤见 [RELEASING.md](docs/RELEASING.md)。
 
-## Resource limits
+## 资源限制
 
-`UriTemplate::parse` uses documented defaults: a 1 MiB template, 4,096
-expressions, and 256 variables per expression. Applications accepting
-untrusted templates can call `UriTemplate::parse_with_limits` to set smaller
-per-call bounds. `UriTemplate::expand` limits output to 1 MiB;
-`expand_with_limit` accepts an explicit smaller or larger bound. No global
-mutable configuration is used.
+`UriTemplate::parse` 使用文档化的默认值：最大 1 MiB 模板长度、4096 个表达式、
+每个表达式 256 个变量。接受不可信模板的应用可调用 `UriTemplate::parse_with_limits`
+设置更小的每次调用上限。`UriTemplate::expand` 限制输出为 1 MiB；
+`expand_with_limit` 接受显式的更小或更大上限。不使用全局可变配置。
 
-The executable [HTTP client example](examples/http-client/main.mbt) shows how
-an SDK request model maps typed fields to an RFC 6570 endpoint:
+[HTTP 客户端示例](examples/http-client/main.mbt) 展示了 SDK 请求模型如何将
+类型化字段映射到 RFC 6570 端点：
 
 ```bash
 moon run examples/http-client
 ```
 
-## Security
+## 安全边界
 
-URI Template expansion is not input validation. In particular, `{+var}` and
-`{#var}` permit URI reserved characters. Apply a separate destination policy
-before using expanded, untrusted values for SSRF-sensitive network requests.
-Structured errors do not echo the complete variable map.
+URI Template 展开不是输入校验。尤其 `{+var}` 和 `{#var}` 刻意允许 URI 保留字符。
+在对不可信展开值发起 SSRF 敏感网络请求前，请应用独立的 scheme/host/port 目标策略。
+结构化错误不会回显完整变量集合。
 
-## License
+## 许可证
 
-Project code is MIT licensed. Vendored conformance fixtures retain Apache-2.0.
+项目代码采用 MIT 许可证。引入的标准测试集保留 Apache-2.0 许可证。
