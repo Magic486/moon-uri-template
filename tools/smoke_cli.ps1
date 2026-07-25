@@ -63,6 +63,7 @@ try {
     throw "unknown command did not return the documented invocation error"
   }
   Write-Output "CLI smoke tests passed."
+  exit 0
 } finally {
   Pop-Location
 }
