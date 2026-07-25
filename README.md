@@ -7,10 +7,15 @@ Unicode 码点感知截取、UTF-8 百分号编码、结构化错误、JSON 变�
 
 命名空间：`Magic486/moon-uri-template`。
 
+- **mooncakes**: <https://mooncakes.io/packages/Magic486/moon-uri-template>
+- **GitHub**: <https://github.com/Magic486/moon-uri-template>
+- **GitLink**: <https://www.gitlink.org.cn/Magic486/moon-uri-template>
+
 ## 安装
 
-首个 mooncakes.io 版本发布前，请克隆仓库并执行 `moon update`。确认命名空间后，
-最终 `moon add` 命令将在此处更新。
+```bash
+moon add Magic486/moon-uri-template
+```
 
 ## 示例
 

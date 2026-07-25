@@ -9,12 +9,14 @@
 
 命名空间：`Magic486/moon-uri-template`。
 
+- **mooncakes**: <https://mooncakes.io/packages/Magic486/moon-uri-template>
+- **GitHub**: <https://github.com/Magic486/moon-uri-template>
+- **GitLink**: <https://www.gitlink.org.cn/Magic486/moon-uri-template>
+
 ## 安装
 
-在 mooncakes.io 的首个版本发布之前，请克隆本仓库并安装锁定的依赖：
-
 ```bash
-moon update
+moon add Magic486/moon-uri-template
 ```
 
 同一模块中的应用可直接导入根包。
