@@ -43,8 +43,8 @@ moon add Magic486/moon-uri-template
 ```mbt check
 ///|
 test "expand one scalar" {
-  let template = @moon-uri-template.UriTemplate::parse("hello/{name}")
-  let variables : Map[String, @moon-uri-template.UriValue] = {
+  let template = UriTemplate::parse("hello/{name}")
+  let variables : Map[String, UriValue] = {
     "name": Scalar("MoonBit"),
   }
   assert_eq(template.expand(variables), "hello/MoonBit")
@@ -56,10 +56,10 @@ test "expand one scalar" {
 ```mbt check
 ///|
 test "expand a repository issues URI" {
-  let template = @moon-uri-template.UriTemplate::parse(
+  let template = UriTemplate::parse(
     "/repos/{owner}/{repo}/issues{?page,labels*}",
   )
-  let variables : Map[String, @moon-uri-template.UriValue] = {
+  let variables : Map[String, UriValue] = {
     "owner": Scalar("moonbitlang"),
     "repo": Scalar("core"),
     "page": Scalar("2"),
@@ -91,8 +91,8 @@ pub(all) enum UriValue {
 ```mbt check
 ///|
 test "prefix length counts Unicode code points" {
-  let template = @moon-uri-template.UriTemplate::parse("{value:2}")
-  let variables : Map[String, @moon-uri-template.UriValue] = {
+  let template = UriTemplate::parse("{value:2}")
+  let variables : Map[String, UriValue] = {
     "value": Scalar("月兔Moon"),
   }
   assert_eq(template.expand(variables), "%E6%9C%88%E5%85%94")
@@ -104,8 +104,8 @@ test "prefix length counts Unicode code points" {
 ```mbt check
 ///|
 test "explode a list into repeated query parameters" {
-  let template = @moon-uri-template.UriTemplate::parse("{?labels*}")
-  let variables : Map[String, @moon-uri-template.UriValue] = {
+  let template = UriTemplate::parse("{?labels*}")
+  let variables : Map[String, UriValue] = {
     "labels": List(["bug", "help wanted"]),
   }
   assert_eq(template.expand(variables), "?labels=bug&labels=help%20wanted")
@@ -117,8 +117,8 @@ test "explode a list into repeated query parameters" {
 ```mbt check
 ///|
 test "expand an associative value" {
-  let template = @moon-uri-template.UriTemplate::parse("{?filters*}")
-  let variables : Map[String, @moon-uri-template.UriValue] = {
+  let template = UriTemplate::parse("{?filters*}")
+  let variables : Map[String, UriValue] = {
     "filters": Assoc([("state", "open"), ("author", "月兔")]),
   }
   assert_eq(template.expand(variables), "?state=open&author=%E6%9C%88%E5%85%94")
@@ -133,7 +133,7 @@ test "expand an associative value" {
 ```mbt check
 ///|
 test "parse with application-specific limits" {
-  let template = @moon-uri-template.UriTemplate::parse_with_limits(
+  let template = UriTemplate::parse_with_limits(
     "/users/{name}{?page}",
     max_template_length=128,
     max_expressions=2,
@@ -153,7 +153,7 @@ test "parse with application-specific limits" {
 ```mbt check
 ///|
 test "handle a syntax error with its source offset" {
-  let rejected = try @moon-uri-template.UriTemplate::parse("{unclosed") catch {
+  let rejected = try UriTemplate::parse("{unclosed") catch {
     SyntaxError(offset~, message=_) => offset == 0
     _ => false
   } noraise {

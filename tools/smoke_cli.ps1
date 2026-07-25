@@ -10,6 +10,7 @@ function Invoke-Cli([string[]]$Arguments) {
   $lines = @($rawOutput | ForEach-Object { $_.ToString() })
   $stdout = @($lines | Where-Object {
     $_ -notmatch "^Finished\. moon:" -and
+    $_ -notmatch "^Warning:" -and
     $_ -notmatch "^\s*$"
   })
   @{
