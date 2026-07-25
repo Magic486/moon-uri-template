@@ -65,16 +65,16 @@ moon info
 ```
 
 The complete public guide with tested examples is
-[README.mbt.md](README.mbt.md). See [SPEC.md](SPEC.md) for normative scope,
-[GOALS.md](GOALS.md) for milestones, and [THIRD_PARTY.md](THIRD_PARTY.md) for
+[README.mbt.md](README.mbt.md). See [SPEC.md](docs/SPEC.md) for normative scope,
+[GOALS.md](docs/GOALS.md) for milestones, and [THIRD_PARTY.md](docs/THIRD_PARTY.md) for
 attribution. Reproducible performance cases and the first local baseline are
-documented in [BENCHMARKS.md](BENCHMARKS.md).
-The [differential suite](DIFFERENTIAL_TESTING.md) compares representative
+documented in [BENCHMARKS.md](docs/BENCHMARKS.md).
+The [differential suite](docs/DIFFERENTIAL_TESTING.md) compares representative
 expansions byte-for-byte with two independently maintained implementations.
 The current one-page contest application is available at
 [output/pdf/moon-uri-template-project-proposal.pdf](output/pdf/moon-uri-template-project-proposal.pdf).
 Release and GitHub/Gitlink synchronization steps are documented in
-[RELEASING.md](RELEASING.md).
+[RELEASING.md](docs/RELEASING.md).
 
 ## Resource limits
 

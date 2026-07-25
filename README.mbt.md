@@ -262,9 +262,9 @@ moon info
 ```
 
 Project scope and acceptance requirements are defined in
-[SPEC.md](SPEC.md). Delivery priorities and milestones are tracked in
-[GOALS.md](GOALS.md). Third-party attribution is recorded in
-[THIRD_PARTY.md](THIRD_PARTY.md).
+[SPEC.md](docs/SPEC.md). Delivery priorities and milestones are tracked in
+[GOALS.md](docs/GOALS.md). Third-party attribution is recorded in
+[THIRD_PARTY.md](docs/THIRD_PARTY.md).
 
 ## License
 
