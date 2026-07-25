@@ -44,9 +44,7 @@ moon add Magic486/moon-uri-template
 ///|
 test "expand one scalar" {
   let template = UriTemplate::parse("hello/{name}")
-  let variables : Map[String, UriValue] = {
-    "name": Scalar("MoonBit"),
-  }
+  let variables : Map[String, UriValue] = { "name": Scalar("MoonBit") }
   assert_eq(template.expand(variables), "hello/MoonBit")
 }
 ```
@@ -92,9 +90,7 @@ pub(all) enum UriValue {
 ///|
 test "prefix length counts Unicode code points" {
   let template = UriTemplate::parse("{value:2}")
-  let variables : Map[String, UriValue] = {
-    "value": Scalar("月兔Moon"),
-  }
+  let variables : Map[String, UriValue] = { "value": Scalar("月兔Moon") }
   assert_eq(template.expand(variables), "%E6%9C%88%E5%85%94")
 }
 ```

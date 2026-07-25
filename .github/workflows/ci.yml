@@ -30,6 +30,7 @@ jobs:
 
       - name: Check formatting and public API
         run: |
+          moon fmt
           moon fmt --check
           moon check --warn-list +73
           moon info
