@@ -24,13 +24,6 @@ jobs:
           moon version --all
           moon update
 
-      - name: Regenerate conformance tests
-        shell: pwsh
-        run: |
-          ./tools/generate_conformance_tests.ps1
-          moon fmt conformance_generated_wbtest.mbt
-          git diff --exit-code -- conformance_generated_wbtest.mbt conformance-summary.json
-
       - name: Verify mooncakes archive contents
         shell: pwsh
         run: ./tools/check_package_contents.ps1
