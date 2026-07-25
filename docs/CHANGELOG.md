@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-07-25
+
+- Add moon.mod.json for mooncakes.io doc generation compatibility.
+- Update repository links and installation instructions.
+
 ## 0.1.0 — 2026-07-25
 
 - Implement RFC 6570 Level 1–4 parsing and expansion.
